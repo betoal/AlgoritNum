@@ -31,13 +31,13 @@ function [areas,tamRect] = calcInterseccAreasFiguras_01(figs,N)
   dos_a_la_nf = 2^nf;
   vd = cumprod([1;2*ones(nf-1,1)]); % Sabe donde cayeron los puntos
   d = zeros(1,dos_a_la_nf);
-  for t = 1:N
-    for k = 1:nf
-      c(k) = figs{k}.contiene(p(:,t)); % Se checa si el punto cae dentro de la figura
+  for t = 1:N % Ciclo para cada punto
+    for k = 1:nf % Ciclo para cada figura.
+      c(k) = figs{k}.contiene(p(:,t)); % Se checa si el punto cae dentro de la figura.
     end
     w = c*vd; % Se hace producto punto del valor de los puntos prendidos.
-    if w == 0, w = dos_a_la_nf; end 
-    d(w) = d(w) + 1;
+    if w == 0, w = dos_a_la_nf; end % Si no hay intersección, se manda al último.
+    d(w) = d(w) + 1; % En este vector se guarda lo que sucedió en todas las figuras.
   end
   tamRect = dx * dy;
   areas = d * tamRect / N;
