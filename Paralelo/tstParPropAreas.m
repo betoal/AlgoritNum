@@ -18,7 +18,7 @@ tic
 submit(job); % Jala el job
 
 wait(job) % Espera a que termine el job
-sal = fetchOutputs(job); 
+sal = fetchOutputs(job); % Jalar la salida del job.
 toc
 
 % Se ve la salida de cada tarea.

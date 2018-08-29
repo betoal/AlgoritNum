@@ -1,17 +1,17 @@
-classdef Circulo < Figura2D % Herencia del objeto
+classdef Circulo < Figura2D
    properties
      radio  
    end
    methods 
-       function obj = Circulo(x,r) % Constructor
-           if nargin == 0 % Numero de argumentos que tiene
+       function obj = Circulo(x,r)
+           if nargin == 0
              fig2d_args{1} = [0.0;0.0];
              c = 1.0;
            else
              fig2d_args{1} = x;
              c = r;
            end  
-           obj@Figura2D(fig2d_args{:}); % Se ponen los datos al objeto
+           obj@Figura2D(fig2d_args{:});
            obj.radio  = c;
        end
        function bln = contiene(obj,p)
@@ -23,7 +23,7 @@ classdef Circulo < Figura2D % Herencia del objeto
          d = pv - obj.centro;
          bln = (d' * d) <= obj.radio^2;
        end
-       function xtam = valoresExtremos(obj) % Preguntar el tamaño
+       function xtam = valoresExtremos(obj)
           xtam = [[obj.centro(1)-obj.radio;obj.centro(2)-obj.radio], ...
                   [obj.centro(1)+obj.radio;obj.centro(2)+obj.radio]];
        end
