@@ -2,11 +2,18 @@ classdef Gauss
     properties
         norm
         mu
+        sd
     end
     methods
         function obj = Gauss(mu,sigma)
-            obj.norm = exp((-(sym(X)-mu)^2)/(2*(sigma^2)));
+            if nargin == 0
+                mu = 0;
+                sigma = 1;
+            end
+            normal = @(x) exp((-(x-mu)^2)/(2*(sigma^2)));
+            obj.norm = normal;
             obj.mu = mu;
+            obj.sd = sigma;
         end
         function bln = contiene(obj,p)
             if nargin == 0
@@ -14,14 +21,15 @@ classdef Gauss
             else
                 pv = p;
             end
-            y = pv(2);
-            syms x = pv(1);
-            bln = y <= obj.norm;
+            bln = pv(2) <= obj.norm(pv(1));
         end
-        %function xtam = valoresExtremos(obj)
-        %  xtam = [[obj.mu-obj.radio;obj.centro(2)-obj.radio], ...
-        %          [obj.centro(1)+obj.radio;obj.centro(2)+obj.radio]];
-        %end
+        function xtam = valoresExtremos(obj)
+            xtam = [[0;obj.norm(0)], ...
+                 [obj.mu+obj.sd;obj.norm(obj.mu+obj.sd)]];
+        end
+        function area = densidadArea(obj)
+            area = normcdf(xtam,obj.mu,obj.sd);
+        end
     end
 end
             

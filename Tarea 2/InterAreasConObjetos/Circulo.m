@@ -27,5 +27,8 @@ classdef Circulo < Figura2D
           xtam = [[obj.centro(1)-obj.radio;obj.centro(2)-obj.radio], ...
                   [obj.centro(1)+obj.radio;obj.centro(2)+obj.radio]];
        end
+       function area = densidadArea();
+           area = pi * obj.radio^2;
+       end
    end
 end

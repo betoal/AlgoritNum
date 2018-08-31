@@ -44,5 +44,19 @@ classdef FiguraCompuesta
           xtam = [[min(extremos(1,1,:));min(extremos(2,1,:))], ...
                   [max(extremos(1,2,:));max(extremos(2,2,:))]];
        end
+       
+       function area = densidadArea(obj)
+           densidad=zeros(obj.num_figs,1);
+           for f = 1:obj.num_figs
+               a = isprop(obj.figs{f},'area');
+               if ~a
+                   densidad(f,:) = 0;
+               else
+                    densidad(f,:) = obj.figs{f}.area();
+               end
+           end
+           aux = ones(1,obj.num_figs);
+           area = dot(densidad,aux);
+       end
    end
 end

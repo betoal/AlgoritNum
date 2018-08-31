@@ -1,9 +1,11 @@
 % tstFiguraCompuesta
 figs    = {};
-figs{1} = RectanguloCanonico([0;0],3,3);
-figs{2} = Circulo([0;0],2); 
-figs{3} = Triangulo([0;1],[-0.5*sqrt(3);-0.5],[0.5*sqrt(3);-0.5]);
-inter_cta = [0,0,0,0,0,0,1,0];
+%figs{1} = RectanguloCanonico([0;0],3,3);
+figs{1} = Gauss(6,2);
+figs{2} = Circulo([3;0.25],0.5); 
+%figs{3} = Triangulo([0;1],[-0.5*sqrt(3);-0.5],[0.5*sqrt(3);-0.5]);
+figs{3} = Gauss(2,1);
+inter_cta = [1,1,0,1,1,0,0,0];
 fc = FiguraCompuesta(figs,inter_cta);
 vxtrms = fc.valoresExtremos();
 dx = vxtrms(1,2) - vxtrms(1,1);
@@ -27,9 +29,7 @@ parfor n = 1:N  % para cada columna
     end   
 end
 toc
-AreaTeorica = 3 * sqrt(3) / 4; % 36 - 4 * pi + 3 * sqrt(3) / 4;
-p = AreaTeorica / dxdy;
-stdAteorica=dxdy*sqrt(p*(1-p))./sqrt(K*(1:N));
+%AreaTeorica = 3 * sqrt(3) / 4; % 36 -  rt(K*(1:N));
 mA = mean(A);
 sA = std(A);
 hold off
