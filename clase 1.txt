@@ -1,0 +1,420 @@
+package clase.pkg1.pkg1;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+/**
+ */
+public class Clase11 {
+    public static void main(String[] args) throws IOException {
+       String inputLine;
+       BufferedReader keyboard;
+       keyboard = new BufferedReader(new InputStreamReader(System.in));
+       
+       inputLine = keyboard.readLine();
+       
+       System.out.print(inputLine.toUpperCase());
+       System.out.println("s".toUpperCase());
+       
+       
+       
+    }
+    
+}
+
+
+clase 2:
+
+package clase.pkg1.pkg2;
+
+import java.io.*;
+
+
+/**
+ */
+public class Clase12 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) throws Exception {
+        File diskFile = new File("data.doc");
+        FileOutputStream dfs = new FileOutputStream(diskFile);
+        PrintStream salida = new PrintStream(dfs);
+        salida.println("Hola archivo de disco!");
+        
+    }
+    
+}
+
+
+
+clase 3:
+package clase.pkg2.pkg1;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+/**
+ */
+public class Clase21 {
+
+    /**
+     */
+    public static void main(String[] args)  throws IOException {
+      String iniciales;
+      String inicialesd;
+      String lee1;
+      String lee2;
+      String leea;
+      
+      BufferedReader keyboard;
+      keyboard = new BufferedReader(new InputStreamReader(System.in));
+      lee1 = keyboard.readLine();
+      lee2 = keyboard.readLine();
+      leea = keyboard.readLine();
+      
+      String initPrim, initSeg, initAp,iniPrim, iniSeg, iniAp;
+      
+      initPrim = lee1.substring(0,1);
+      initSeg = lee2.substring(0,1);
+      initAp = leea.substring(0,1);
+      
+      iniPrim = lee1.substring(1,2);
+      iniSeg = lee2.substring(1,2);
+      iniAp = leea.substring(1,2);
+      
+      iniciales = initPrim.concat(initSeg); // la concatenación es la suma de dos cadenas se puede sustituir concat con + (se supone)
+      iniciales = iniciales.concat(initAp); // initPrim+initSeg
+      inicialesd = iniPrim.concat(iniSeg);
+      inicialesd = inicialesd.concat(iniAp);
+      
+      System.out.println(iniciales);
+      System.out.println(inicialesd);
+     
+    }
+    
+}
+
+
+
+clase 4:
+
+package clase.pkg2.pkg2;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+/**
+ */
+public class Clase22 {
+
+    /**
+     */
+    public static void main(String[] args) throws IOException {
+        System.out.println("Escriba una palabra:");
+        BufferedReader keyboard;
+        keyboard = new BufferedReader(new InputStreamReader(System.in));
+        String entrada1 = keyboard.readLine();
+        System.out.println("Lei: ["+entrada1+"]");
+        
+        
+    }
+    
+}
+
+
+clase 5:
+package clase.pkg3.pkg1;
+
+import java.io.*;
+
+/**
+ *
+ */
+public class Clase31 {
+
+    /**
+     */
+    public static void main(String[] args) throws Exception{
+        String iL1, iL2;
+        BufferedReader keyboard;
+        InputStreamReader ISRLine;
+        
+        System.out.println("Deme el nombre del archivo que desea crear:");
+        
+        ISRLine = new InputStreamReader(System.in);
+        keyboard = new BufferedReader(ISRLine);
+        
+        iL1 = keyboard.readLine();
+        
+        System.out.println("Digame que quiere escribir en el archivo:");
+        
+        iL2 = keyboard.readLine();
+        
+            File MiArchivo = new File(iL1);
+            FileOutputStream fsMA = new FileOutputStream(MiArchivo);
+            PrintStream sMA = new PrintStream(fsMA);
+            sMA.println(iL2);
+            
+            System.out.println("Archivo creado");
+            
+    }
+    
+}
+
+
+
+clase 6:
+package clase.pkg3.pkg2;
+
+import java.io.*;
+
+/**
+ */
+public class Clase32 {
+
+    /**
+     */
+    public static void main(String[] args) throws Exception {
+        File Numeros = new File("Numeros1.txt");
+        FileInputStream fisNumeros = new FileInputStream(Numeros);
+        InputStreamReader isrNumeros = new InputStreamReader(fisNumeros);
+        BufferedReader brNumeros = new BufferedReader(isrNumeros);
+        
+        int n1, n2, n3, n4, n5;
+        n1 = Integer.parseInt(brNumeros.readLine());
+        n2 = Integer.parseInt(brNumeros.readLine());
+        n3 = Integer.parseInt(brNumeros.readLine());
+        n4 = Integer.parseInt(brNumeros.readLine());
+        n5 = Integer.parseInt(brNumeros.readLine());
+        
+        int suma;
+        float promedio;
+        
+        suma = n1 + n2 + n3 + n4 + n5;
+        promedio = suma/5;
+        
+        File Promedio = new File("Promedio3.txt");
+        FileOutputStream fosPromedio = new FileOutputStream(Promedio);
+        PrintStream psPromedio = new PrintStream(fosPromedio);
+        
+        psPromedio.print("Suma: ");
+        psPromedio.print(suma);
+        psPromedio.print("; Promedio: ");
+        psPromedio.println(promedio);
+
+    }
+    
+}
+
+
+
+
+clase 8:
+package clase.pkg3.pkg3;
+
+import java.io.*;
+
+/**
+ *
+ */
+public class Clase33 {
+
+    /**
+     */
+    public static void main(String[] args) throws Exception {
+        String sa, sf, s1, s2, s3, s4, s5;
+        BufferedReader keyboard;
+        InputStreamReader Linea;
+        
+        System.out.println("Deme el nombre del archivo: ");
+        
+        Linea = new InputStreamReader(System.in);
+        keyboard = new BufferedReader(Linea);
+        
+        sa = keyboard.readLine();
+        
+        System.out.println("Digame que quiere escribir en el archivo: ");
+        
+        s1 = keyboard.readLine();
+        s2 = keyboard.readLine();
+        s3 = keyboard.readLine();
+        s4 = keyboard.readLine();
+        s5 = keyboard.readLine();
+        
+        File Numeros = new File(sa);
+        FileOutputStream fsMa = new FileOutputStream(Numeros);
+        PrintStream sMa = new PrintStream(fsMa);
+        
+        sMa.println(s1);
+        sMa.println(s2);
+        sMa.println(s3);
+        sMa.println(s4);
+        sMa.println(s5);
+        
+        FileInputStream fisNumeros = new FileInputStream(Numeros);
+        InputStreamReader isrNumeros = new InputStreamReader(fisNumeros);
+        BufferedReader brNumeros = new BufferedReader(isrNumeros);
+        
+        int n1, n2, n3, n4, n5;
+        n1 = Integer.parseInt(brNumeros.readLine());
+        n2 = Integer.parseInt(brNumeros.readLine());
+        n3 = Integer.parseInt(brNumeros.readLine());
+        n4 = Integer.parseInt(brNumeros.readLine());
+        n5 = Integer.parseInt(brNumeros.readLine());
+        
+        int suma;
+        float promedio;
+        
+        suma = n1 + n2 + n3 + n4 + n5;
+        promedio = suma/5;
+        
+        System.out.println("Deme el nombre del archivo donde se guardaran los resultados: ");
+        
+        sf = keyboard.readLine();
+        
+        File Promedio = new File(sf);
+        FileOutputStream fosPromedio = new FileOutputStream(Promedio);
+        PrintStream psPromedio = new PrintStream(fosPromedio);
+        
+        psPromedio.print("Suma: ");
+        psPromedio.print(suma);
+        psPromedio.print("; Promedio: ");
+        psPromedio.println(promedio);
+        
+        
+        
+    }
+    
+}
+
+
+clase 9:
+
+package clase.pkg4.pkg22;
+
+import java.io.*;
+
+public class Clase42 {
+
+    /**
+     */
+    public static void main(String[] args) throws Exception {
+        BufferedReader brKeyboard = new BufferedReader(new InputStreamReader (System.in));
+        
+        System.out.println("Deme el número del mes:");
+        String strKeyboard = brKeyboard.readLine();
+        byte mes = (byte)Integer.parseInt(strKeyboard);
+        
+        byte dias;
+        
+        switch (mes)
+        {
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+            case 8:
+            case 10:
+            case 12:
+                dias = 31;
+                break;
+            case 2:
+                dias = 28;
+                break;
+            default:
+                dias = 30;
+            
+        }
+        System.out.println("Dias en el Mes: "+dias);
+    }
+    
+}
+
+
+
+
+ultima clase:
+
+package clase.pkg8;
+import java.io.*;
+import java.util.Random;
+/**
+ */
+public class Clase8 {
+
+    /**
+     */
+class CreaAleatsVersionFunciones {
+    
+}
+
+    static BufferedReader kb = new BufferedReader(new InputStreamReader(System.in));
+    static PrintStream p=System.out;
+    static String Resp;
+    static PrintStream Fps;
+
+  public static boolean itera(int vez) throws Exception {
+    if (vez==0)
+       return true;
+    p.println("\nDesea correr otra simulacion?");
+	p.println("\"S\" para continuar; otro para terminar...");
+	Resp=kb.readLine().toUpperCase();
+	if (Resp.equals("S"))
+	   return true;
+    //endIf
+    return false;
+  }//endItera       
+
+  public static void main(String[] args) throws Exception {
+	int raiz,N;
+	Random Aleat;
+    int cuenta=0;
+   	while (true){
+        if (!itera(cuenta))
+           return;
+        //endIf
+        cuenta++;
+		while (true){
+		    p.println("Deme la raiz (entera) del generador de numeros aleatorios:");
+		    try{raiz=Integer.parseInt(kb.readLine());break;}
+		    catch (Exception e1) {continue;}
+		}//endWhile
+		Aleat = new Random(raiz);
+		while (true){
+		    p.println("\nCuantos aleatorios desea simular?");
+	  	    try {N=Integer.parseInt(kb.readLine());break;}
+  		    catch (Exception e){continue;}
+		}//endWhile
+		float Numero[] = new float [N];
+		float mu_x=0, sigma_x=0;
+		p.println("Deme el nombre del archivo de datos destino:");
+		String FName=kb.readLine();
+		PrintStream FN=new PrintStream(new FileOutputStream(new File(FName)));
+		for (int i=0;i<N;i++){
+	    	    float X = Aleat.nextFloat();
+	    	    FN.println(X);
+		    mu_x=mu_x+X;
+		    Numero[i]=X;
+		}//endFor
+		mu_x=mu_x/N;
+		sigma_x=0;
+		for (int j=0;j<N;j++){
+		    float dif=mu_x-Numero[j];
+		    sigma_x=sigma_x+dif*dif;
+		}//endFor
+		sigma_x=sigma_x/N;
+		sigma_x=(float)Math.sqrt(sigma_x);
+		p.printf("mu_x:    %11.5f\r\n",mu_x);
+		p.printf("sigma_x: %11.5f\r\n",sigma_x);
+		FN.printf("mu_x:    %11.5f\r\n",mu_x);
+		FN.printf("sigma_x: %11.5f\r\n",sigma_x);
+		FN.close();
+	}//endWhile
+  }//endMain
+} //endClass
