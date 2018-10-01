@@ -12,3 +12,20 @@ polyval(coef,2) % Da el valor del polinomio evaluado en x punto.
 x = [1 1.3 1.6 1.9 2.2];
 y = [0.1411 -0.6878 -0.9962 -0.5507 0.3115];
 interpLagrange(x,y,1.5)
+
+
+%% Segundo Método Lagrange
+xVal = linspace(1,2.2);
+yVal = zeros(length(xVal),1);
+
+% x = [1 1.3 1.6 1.9 2.2];
+% y = [0.1411 -0.6878 -0.9962 -0.5507 0.3115];
+
+for t = 1:length(xVal)
+    yVal(t) = interpLangrange(x,y,xVal)
+end
+
+y2 = interpLagrange(x,y,xVal);
+plot(xVal,yVal,'ro');
+hold on
+plot(xVal,y2,'bx');
