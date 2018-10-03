@@ -1,4 +1,4 @@
-%% Polinomios de Chebychev (interpolación)
+%% Polinomios de Chebyshev (interpolación)
 
 % Se obtienen de la siguiente expresión
 % Tn(x) = cos(n arccos(x)); x in [-1,1]
@@ -28,3 +28,7 @@
 
 % En general se requiere xk tal que: Tn(xk) = 0; k=0,...,n-1
 % cos((2*(n-1)*pi)/2n); k=0,...,n-1 <-- Raíces
+
+% Lagrange := Una función que pase por los valores que te dan (1 en xi; 0
+% en xj!=i)
+% l0(x) = (x-x1)(x-x2)...(x-xn)/(x0-x1)(x0-x2)...(x0-xn)
