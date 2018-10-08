@@ -32,3 +32,13 @@
 % Lagrange := Una función que pase por los valores que te dan (1 en xi; 0
 % en xj!=i)
 % l0(x) = (x-x1)(x-x2)...(x-xn)/(x0-x1)(x0-x2)...(x0-xn)
+
+%% Ortogonalidad
+
+n = 10;
+tk = (2 * (0:n-1) + 1) / (2 * n);
+format('RAT'); tk;
+format('long'); sum(cos(tk * pi))
+r = 3;
+format('RAT'); res = r * tk
+polarplot(tk, res * pi) % tk es la base
