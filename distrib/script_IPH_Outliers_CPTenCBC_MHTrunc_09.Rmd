@@ -1,0 +1,354 @@
+---
+title: "Indicadores Hospitalarios, Anhos 2013 a 2017"
+subtitle: "Estudio de Outliers"
+author: "Rafael Gregorio Gamboa Hirales"
+email: "rgamboa@itam.mx"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  word_document: 
+    reference_docx: ref_IPH_outliers.docx
+---
+
+```{r include=TRUE, echo=FALSE, warning=FALSE, message= FALSE, fig.height=7,fig.width=8.75,fig.align='center'}
+
+
+
+#options()
+carga = TRUE
+
+if(carga)
+{
+  #library(hash)
+  library(readr)
+  library(dplyr)
+  library(ggplot2)
+  library(pagenum)
+  library(grid)
+  library(gtable)
+  library(gridExtra)
+  library(tictoc)
+  #
+  # =======================================================================
+  # =============== NOMBRE DEL ARCHIVO DE DATOS DE ENTRADA ================
+  #
+  tic("Calulando Outliers")
+  txtEntrada = "tbl_tdh_11_SinOLSinAcentos"
+    #"tdh_01" #Tabla_2013_2017_trab" # "tdh_01""
+  txtWorkingDitectory = "c:/proyectos/AMIS/20180701_ParaEstadisticas/RMarkDown/Ejemplos"
+  setwd(txtWorkingDitectory)
+  source('ajustaDistMuBetaLogNormalTrunc.R')
+  #==================================================================
+  # tdh_01 <- read_delim(paste(txtEntrada,".txt",sep=""), #tdh_01.txt", 
+  #                      "\t", escape_double = FALSE, 
+  #                      col_types = cols(Cia = col_integer(),
+  #                                       ANHO_ESP = col_skip(), 
+  #                                       CIE_ESP = col_skip(), Clase = col_skip(), 
+  #                                       ESP = col_skip(), ESP_FIN = col_skip(), 
+  #                                       Fec_Nac_F = col_datetime(format = "%d/%m/%Y %H:%M:%S"), 
+  #                                       Fecha_1er_Rec_F = col_datetime(format = "%d/%m/%Y %H:%M:%S"), 
+  #                                       Fecha_Rec_F = col_datetime(format = "%d/%m/%Y %H:%M:%S"), 
+  #                                       GRUPO_ANHO_ESP = col_skip(), RFC_ANHO_ESP = col_skip(), 
+  #                                       indCBC = col_skip()),
+  #                      locale = locale(date_format = "%d/%m/%y %H:%M:%S", 
+  #                      asciify = TRUE), trim_ws = TRUE)
+  #|=============================================================================================| 100%  251 MB
+  #View(tdh_01)  
+
+  tdh_01 = read_delim(paste(txtEntrada,".txt",sep=""), #tdh_01.txt",
+                       "\t", escape_double = FALSE,
+                       col_types = cols(Fec_Nac_F       = col_datetime(format = "%d/%m/%Y %H:%M:%S"),
+                                        Fecha_1er_Rec_F = col_datetime(format = "%d/%m/%Y %H:%M:%S"),
+                                        Fecha_Rec_F     = col_datetime(format = "%d/%m/%Y %H:%M:%S")),
+                       locale = locale(date_format = "%d/%m/%y %H:%M:%S",
+                       asciify = TRUE), trim_ws = TRUE)
+
+  View(tdh_01) 
+  
+  #tdh_01$cveArch           = as.factor(tdh_01$cveArch) 
+  tdh_01$Cia               = as.factor(tdh_01$Cia) 
+  tdh_01$Anho              = as.factor(tdh_01$Anho) 
+  tdh_01$Tipo_Seguro       = as.factor(tdh_01$Tipo_Seguro) 
+  tdh_01$Genero            = as.factor(tdh_01$Genero) 
+  tdh_01$Edad              = as.factor(tdh_01$Edad) 
+  tdh_01$Edad_1er_Rec      = as.factor(tdh_01$Edad_1er_Rec) 
+  tdh_01$CIE_CPT           = as.factor(tdh_01$CIE_CPT) 
+  tdh_01$CIE_3DIG          = as.factor(tdh_01$CIE_3DIG) 
+  tdh_01$CIE_10            = as.factor(tdh_01$CIE_10) 
+  tdh_01$CODIGO_CPT4       = as.factor(tdh_01$CODIGO_CPT4) 
+  tdh_01$CPTDesc           = as.factor(tdh_01$CPTDesc) 
+  tdh_01$RFC_CATALOGO_AMIS = as.factor(tdh_01$RFC_CATALOGO_AMIS)
+  tdh_01$Region            = trimws(tdh_01$Region)
+  tdh_01$Region            = as.factor(tdh_01$Region) 
+  tdh_01$Tipo_de_Pago      = as.factor(tdh_01$Tipo_de_Pago) 
+  tdh_01$ind5k             = as.factor(tdh_01$ind5k) 
+  tdh_01$CBC               = as.factor(tdh_01$CBC) 
+  tdh_01$No_OL             = as.factor(tdh_01$No_OL) 
+  tdh_01$ESPE_FINAL        = as.factor(tdh_01$ESPE_FINAL) 
+
+  xcbc=subset(tdh_01,CBC==1 & !is.na(Region) )
+  xcbc$CODIGO_CPT4=as.character(xcbc$CODIGO_CPT4)
+  xcbc$CODIGO_CPT4=as.factor(xcbc$CODIGO_CPT4)
+  cptdesc=unique(xcbc$CPTDesc)
+  cptdesc=sort(substr(as.character(cptdesc),1,60))
+  tblcbc=table(xcbc$CODIGO_CPT4,xcbc$Genero)
+  cpts=rownames(tblcbc)
+}
+
+#nomArchSal = paste("Outliers_",gsub(" ","_",gsub("-|:","",Sys.time())),".pdf",sep="")
+#pdf(nomArchSal,title=nomArchSal,paper="USr",width=10,height=8.0)
+#setPagenum(1)
+#options(width=80)
+  
+# elaborando la tabla para usarla con dplyr
+ tcbc = dplyr::tbl_df(xcbc)
+ #
+ # se quedan los de pago directo y con ind5k == GT5k (mayores a 5,000.00 MXP)
+ #
+ tcbc=filter(tcbc,ind5k=='GT5K' & Tipo_de_Pago==1)
+
+ q = 3 # desviaciones estandar mas alla de q desvStd se consideran outliers
+ prob_outlier = (1-pnorm(q))
+ cat("---------------------------------------------------------------------------------\n")
+ cat("Se consideraran ", q, " desviaciones estandar lo que implica ",prob_outlier," de probabilidad \n\n")
+ anhos = sort(unique(as.integer(as.character(tcbc$Anho))))
+ cat("Anhos: ", anhos,'\n')
+ cat("---------------------------------------------------------------------------------\n")
+ 
+ colores=terrain.colors(3)
+ #
+ # Construyendo el dataframe para almacenar los valores crmticos
+ #
+ dfx_crit        = data.frame("cpt"  = 0,
+                              "Anho" = 0,
+                              "CPT_DES" = "ALFABETO",
+                              "prob_outlier" = 0.0,
+                              "val_crit_tot" = 0.0, "val_crit_col"   = 0.0, "val_crit_ind" = 0.0,
+                              "casos_tot"      = 0, "casos_col"      = 0, "casos_ind"      = 0,
+                              "casos_crit_tot" = 0, "casos_crit_col" = 0, "casos_crit_ind" = 0,
+                              stringsAsFactors = FALSE)
+                       
+ #names(dfx_crit) = c("cpt","Anho",CPT_DES",
+ #                   "prob_outlier","val_crit_tot","val_crit_col","val_crit_ind",
+ #                   "casos_tot","casos_col","casos_ind",
+ #                   "casos_crit_tot","casos_crit_col","casos_crit_ind")
+ 
+ dfx_crit        = dfx_crit[-1,]
+ 
+ #
+ # uso:
+ # dfx_crit[k,] = list(cpt,a,cptdes[k],prob_outlier,             
+ #                          xcrit_tot,xcrit_col,xcrit_ind,
+ #                          length(w_tot),length(w_col),length(w_ind))
+ #
+ 
+ k = 0
+ w = 0
+ for(cpt in cpts) 
+ {
+   k = k + 1
+   for( a in anhos)
+   {
+      
+      cat("---------------------------------- ",a," ----------------------------------------\n")
+      cat(a,": ",k,"  ",cpt,"...",cptdesc[k],'\n')
+      #
+      # inicia el proceso de ajuste
+      #
+      x_tot = filter(tcbc,CODIGO_CPT4 == cpt & Anho == a)$MontoHospitalario
+      x_col = filter(tcbc,CODIGO_CPT4 == cpt & Anho == a & Tipo_Seguro == 'I')$MontoHospitalario
+      x_ind = filter(tcbc,CODIGO_CPT4 == cpt & Anho == a & Tipo_Seguro == 'C')$MontoHospitalario
+    
+      if(k==1) write.csv(x_tot,"19101_tot.csv")
+    
+      lx_tot = log(x_tot)
+      lx_col = log(x_col)
+      lx_ind = log(x_ind)
+    
+      par_tot = c(mean(lx_tot),sd(lx_tot))
+      par_col = c(mean(lx_col),sd(lx_col))
+      par_ind = c(mean(lx_ind),sd(lx_ind))
+    
+      low = c(8, 0.5)
+      up  = c(15, 2 )
+    
+      aj_tot = optim(par_tot,ajustaDistMuBetaLogNormalTrunc,
+                     x=lx_tot,method="L-BFGS-B",lower=low,
+                   upper = up)
+      aj_col = optim(par_col,ajustaDistMuBetaLogNormalTrunc,
+                     x=lx_col,method="L-BFGS-B",lower=low,upper = up)
+      aj_ind = optim(par_ind,ajustaDistMuBetaLogNormalTrunc,
+                     x=lx_ind,method="L-BFGS-B",lower=low,upper = up)
+    
+      xcrit_tot = exp((aj_tot$par[1]+q*aj_tot$par[2]))
+      xcrit_col = exp((aj_col$par[1]+q*aj_col$par[2]))
+      xcrit_ind = exp((aj_ind$par[1]+q*aj_ind$par[2]))
+    
+      #cat( "xcrit_tot:",xcrit_tot, ", xcrit_col:", xcrit_col, ", xcrit_ind:",xcrit_ind,'\n')
+    
+      w_tot = x_tot[which(x_tot >= xcrit_tot)]
+      w_col = x_col[which(x_col >= xcrit_col)]
+      w_ind = x_ind[which(x_ind >= xcrit_ind)]
+      #
+      # -------------- Se agrega en el dataframe para escribirlo en el csv
+      #
+      w = w + 1
+      dfx_crit[w,] = list(cpt,a,cptdesc[k],prob_outlier,
+                                   xcrit_tot,xcrit_col,xcrit_ind,
+                                   length(x_tot),length(x_col),length(x_ind),
+                                   length(w_tot),length(w_col),length(w_ind))
+      #
+      # ------------- fin de la agregación al dataframe
+      #
+      cat("\nTotal: son ",length(x_tot)," casos, valor de umbral = ",xcrit_tot, "\n")
+      cat("Monto Hospitalario:\n")
+      print(summary(x_tot))
+      cat("Ln(Monto Hospitalario):\n")
+      print(summary(lx_tot))
+      cat("Parametros iniciales (alfa, mu y sigma):", par_tot,"\n")
+      cat("Parametros ajustados:                   ", aj_tot$par,"\n")
+      if(length(w_tot) > 0 )
+      {
+        cat("con ", length(w_tot), " outliers:", w_tot,'\n')
+      }else
+      {
+        cat("No hay outliers\n")
+      }
+    
+      cat("\nIndividual: son ",length(x_ind)," casos, valor de umbral = ",xcrit_ind, "\n")
+      cat("Monto Hospitalario:\n")
+      print(summary(x_ind))
+      cat("Ln(Monto Hospitalario):\n")
+      print(summary(lx_ind))
+      cat("Parametros iniciales (alfa, mu y sigma):", par_ind,"\n")
+      cat("Parametros ajustados:                   ", aj_ind$par,"\n")
+      if(length(w_ind) > 0 )
+      {
+        cat("son ", length(w_ind), " outliers:", w_ind,'\n')
+      }else
+      {
+        cat("NO hay outliers\n")
+      }
+    
+      cat("\nColectivo: son ", length(x_col)," casos, valor de umbral = ",xcrit_col, "\n")
+      cat("Monto Hospitalario:\n")
+      print(summary(x_col))
+      cat("Ln(Monto Hospitalario):\n")
+      print(summary(lx_col))
+      cat("Parametros iniciales (alfa, mu y sigma):", par_col,"\n")
+      cat("Parametros ajustados:                   ", aj_col$par,"\n")
+      if(length(w_col) > 0 )
+      {
+        cat("son ", length(w_col), " outliers:", w_col,'\n')
+      }else
+      {
+        cat("No hay outliers\n")
+      }
+    
+      # -----------------------------------------------------------    
+      tam_let         = 0.75
+      tam_let_boxplot = 0.80
+      if(TRUE) #############################
+      {
+        n = 12
+        rc = c(4,3) # n2mfrow(n)
+        par(mfrow=rc) #, mar=c(0,0,0,0)) 
+        x_tot_max = max(x_tot)
+        dfmh=data.frame(Tipo_Seguro=c(rep("T",length(x_tot)),                                                                                      rep("C",length(x_col)),
+                                    rep("I",length(x_ind))),
+                        MH=c(x_tot,x_col,x_ind))
+        cotas      = 5e3 +  ( x_tot_max      - 5e3 ) / 14 * c(0:14)
+        cotasLog = log(5000)   +  ( log(x_tot_max) - log(5000) ) / 14 * c(0:14)
+  
+        boxplot(dfmh$MH~dfmh$Tipo_Seguro,
+                 main=paste("MH por Tipo de seguro, Anho:", a," ",
+                           substr(cptdesc[k],1,20)),cex.main=tam_let_boxplot,
+               horizontal = TRUE,col=colores)
+        boxplot(log(dfmh$MH)~dfmh$Tipo_Seguro,
+                main=paste("Ln(MH) por Tipo de Seguro, Anho:", a," ",
+                           substr(cptdesc[k],1,20)),cex.main=tam_let_boxplot,
+                horizontal = TRUE,col=colores)
+        boxplot(log(dfmh$MH)^aj_tot$par[1]~dfmh$Tipo_Seguro,
+                main=paste("Ln(MH)^alfa por Tipo de Seguro, Anho:",a," ",
+                           substr(cptdesc[k],1,20)),cex.main=tam_let_boxplot,
+                horizontal = TRUE,col=colores)
+            
+        hist(x_tot,breaks=cotas,main = paste(a,",Tot:MH ",
+                                             substr(cptdesc[k],1,36)),cex.main=tam_let,col=colores[3])
+        hist(log(x_tot),breaks=cotasLog,
+             main = paste(a,",Tot:Ln(MH) ",substr(cptdesc[k],1,36)),
+             cex.main=tam_let,col=colores[3])
+        hist(log(x_tot),breaks=15,
+             main = paste(a,",Tot:Ln(MH) ",substr(cptdesc[k],1,36)),
+             cex.main=tam_let,col=colores[3])
+  
+        hist(x_ind,breaks=cotas,main = paste(a,",Ind:MH ",
+                                             substr(cptdesc[k],1,36)),cex.main=tam_let,col=colores[2])
+        hist(log(x_ind),breaks=cotasLog,
+             main = paste(a,",Ind:Ln(MH) ",substr(cptdesc[k],1,36)),
+             cex.main=tam_let,col=colores[2])    
+        hist(log(x_ind),breaks=15,
+             main = paste(a,",Ind:Ln(MH) ",substr(cptdesc[k],1,36)),
+             cex.main=tam_let,col=colores[2])
+        
+        hist(x_col,breaks=cotas,main = paste(a,",Col:MH ",
+                                             substr(cptdesc[k],1,36)),cex.main=tam_let,col=colores[1])
+        hist(log(x_col),breaks=cotasLog,
+             main = paste(a,",Col:Ln(MH) ",
+                          substr(cptdesc[k],1,36)),
+             cex.main=tam_let,col=colores[1])    
+        hist(log(x_col),breaks=15,
+             main = paste(a,",Col:Ln(MH) ",substr(cptdesc[k],1,36)),
+             cex.main=tam_let,col=colores[1])
+
+      } # ================== del if para evitar la salida de los histogramas ================
+      
+   } # ========================== del for para cada anho ====================================
+  
+   #cat("----------------------------------------------------------------------------------\n")
+    
+ } # =================== del for para cada cpt ===============
+ 
+ #
+ # ============================ Salida de csv con los resultados de la corrida ===============
+ #
+ write.csv(dfx_crit,
+              paste("Outliers_CPT_",txtEntrada,"_",
+                     gsub(" ","_",gsub("-|:","",Sys.time())),".csv",sep=""))
+ #
+ # ==========================================================================================
+ #
+ num_regs = w   #length(cpts)
+ tanda = 20
+ k_veces = as.integer((num_regs+ tanda - 1) / tanda ) 
+ for(k_vez in 1:k_veces)
+ {
+   k_ini = ( k_vez - 1 ) * tanda + 1
+   k_fin = min( k_vez * tanda, num_regs)
+   n = 1
+   rc = n2mfrow(n)
+   par(mfrow=rc)
+   
+   plot.new()
+   
+   mytheme <- gridExtra::ttheme_default(
+     core    = list(fg_params=list(cex = 0.50)),
+     colhead = list(fg_params=list(cex = 0.50)),
+     rowhead = list(fg_params=list(cex = 0.50)))
+   dfx_crit[,"CPT_DES"] = substr(dfx_crit[,"CPT_DES"],1,20)
+   table <- tableGrob(dfx_crit[k_ini:k_fin,], rows=NULL, theme=mytheme) #ttheme_default())
+   
+   title <- grid.text("Outliers por CPT para CBC",gp=gpar(fontsize=12, col="black", fontface="bold", fill="black"))
+   
+   table <- gtable_add_rows(table, 
+                            heights = grobHeight(title) + unit(1,"line"),
+                            pos = 0)
+   table <- gtable_add_grob(table,title,
+                            t=1, l=1, 
+                            r=ncol(table))
+   
+   grid.draw(table)
+ } 
+ toc()
+
+```
+
